@@ -172,38 +172,37 @@ mainConfig = ConfigParser.SafeConfigParser()
 mainConfig.read("settings.cfg")
 
 lastUpdated = 0
-# delayTime = mainConfig.getfloat("Main","uploadDelay")
+delayTime = mainConfig.getfloat("Main","uploadDelay")
 redPin = mainConfig.getint("Main","redPin")
 greenPin = mainConfig.getint("Main","greenPin")
 GPIO.setup(redPin,GPIO.OUT,initial=GPIO.LOW)
 GPIO.setup(greenPin,GPIO.OUT,initial=GPIO.LOW)
-#while True:
-#	curTime = time.time()	#, Hoert nicht mehr auf uploadDelay in settings.cfg
-#	if (curTime-lastUpdated)>delayTime:
-#		lastUpdated = curTime
-data = []
+while True:
+	curTime = time.time()
+	if (curTime-lastUpdated)>delayTime:
+		lastUpdated = curTime
+		data = []
 		#Collect the data from each sensor
-for i in sensorPlugins:
-	dataDict = {}
-	val = i.getVal()
-	if val==None: #this means it has no data to upload.
-		continue
-	dataDict["value"] = round(i.getVal(), 2) 	#original was "i.getVal()" now just 2 digits
-	dataDict["unit"] = i.valUnit
-	dataDict["symbol"] = i.valSymbol
-	dataDict["name"] = i.valName
-	dataDict["sensor"] = i.sensorName
-	data.append(dataDict)
-working = True
-for i in outputPlugins:
-	working = working and i.outputData(data)
-if working:
-	print "Uploaded successfully"
-	GPIO.output(greenPin,GPIO.HIGH)
-else:
-	print "Failed to upload"
-	GPIO.output(redPin,GPIO.HIGH)
-time.sleep(5)					# light up LEDs!! 
-#		start    #; no autostart, just use a cronjob!!!
-GPIO.output(greenPin,GPIO.LOW)
-GPIO.output(redPin,GPIO.LOW)
+		for i in sensorPlugins:
+			dataDict = {}
+			val = i.getVal()
+			if val==None: #this means it has no data to upload.
+				continue
+			dataDict["value"] = round(i.getVal(), 2) 	#original war "i.getVal()" dadurch zu lange Ausgabe
+			dataDict["unit"] = i.valUnit
+			dataDict["symbol"] = i.valSymbol
+			dataDict["name"] = i.valName
+			dataDict["sensor"] = i.sensorName
+			data.append(dataDict)
+		working = True
+		for i in outputPlugins:
+			working = working and i.outputData(data)
+		if working:
+			print "Uploaded successfully"
+			GPIO.output(greenPin,GPIO.HIGH)
+		else:
+			print "Failed to upload"
+			GPIO.output(redPin,GPIO.HIGH)
+		time.sleep(10)					# Anzeigedauer der LED
+		GPIO.output(greenPin,GPIO.LOW)
+		GPIO.output(redPin,GPIO.LOW)
