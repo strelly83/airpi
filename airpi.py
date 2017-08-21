@@ -172,15 +172,15 @@ mainConfig = ConfigParser.SafeConfigParser()
 mainConfig.read("settings.cfg")
 
 lastUpdated = 0
-delayTime = mainConfig.getfloat("Main","uploadDelay")
+#delayTime = mainConfig.getfloat("Main","uploadDelay")
 redPin = mainConfig.getint("Main","redPin")
 greenPin = mainConfig.getint("Main","greenPin")
 GPIO.setup(redPin,GPIO.OUT,initial=GPIO.LOW)
 GPIO.setup(greenPin,GPIO.OUT,initial=GPIO.LOW)
-while True:
-	curTime = time.time()	#, Hoert nicht mehr auf uploadDelay in settings.cfg
-	if (curTime-lastUpdated)>delayTime:
-		lastUpdated = curTime
+#while True:
+#	curTime = time.time()	#, Hoert nicht mehr auf uploadDelay in settings.cfg
+#	if (curTime-lastUpdated)>delayTime:
+#		lastUpdated = curTime
 data = []
 		#Collect the data from each sensor
 for i in sensorPlugins:
@@ -204,6 +204,6 @@ else:
 	print "Failed to upload"
 	GPIO.output(redPin,GPIO.HIGH)
 time.sleep(5)					# light up LEDs!! 
-		start    #; no autostart, just use a cronjob!!!
+#		start    #; no autostart, just use a cronjob!!!
 GPIO.output(greenPin,GPIO.LOW)
 GPIO.output(redPin,GPIO.LOW)
