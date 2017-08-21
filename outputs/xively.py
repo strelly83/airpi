@@ -15,7 +15,7 @@ class Xively(output.Output):
 			arr.append({"id":i["name"],"current_value":i["value"]})
 		a = json.dumps({"version":"1.0.0","datastreams":arr})
 		try:
-			z = requests.put("https://api.xively.com/v2/feeds/"+self.FeedID+".json",headers={"X-ApiKey":self.APIKey},data=a)
+			z = requests.put("https://api.xively.com/v2/feeds/"+self.FeedID+".json",headers={"X-ApiKey":self.APIKey},data=a,verify=False)
 			if z.text!="": 
 				print "Xively Error: " + z.text
 				return False
