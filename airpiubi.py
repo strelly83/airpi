@@ -4,6 +4,8 @@ import RPi.GPIO as GPIO 			# Library for using the GPIO ports
 from  math import log1p,exp,log10 	# Library for math functions. No need for it if you'll get the raw data from the sensors
 from ubidots import ApiClient  		# Ubidots Library
 import Adafruit_DHT 				# Library from Adafruit to simplify the use of DHT sensor.
+import Adafruit_BMP.BMP085 as BMP085
+
 
 # Set up the SPI interface pins. Through SPI we can connect to the ADC MCP3008
 
@@ -107,14 +109,21 @@ try:
    if carbon is None:
 	  carbon = dS.create_variable({"name": "Carbon_monoxide_concentration","unit": "ppm"}) # Create a new Variable for CO level
   
-
-   temp = getVarbyNames("Temperature",dS)
+   temp = getVarbyNames("Temperature1",dS)
    if temp is None:
 	  temp = dS.create_variable({"name": "Temperature", "unit": "C"})	#Create a new Variable for temperature
 
    humidity = getVarbyNames("Humidity",dS)
    if humidity is None:
 	  humidity = dS.create_variable({"name": "Humidity","unit": "%"}) # Create a new Variable for humidity
+
+   temp2 = getVarbyNames("Temperature2",dS)
+   if temp2 is None:
+	  temp2 = dS.create_variable({"name": "Temperature2","unit": "C"}) # Create a new Variable for temperature
+
+   pressure = getVarbyNames("Pressure",dS)
+   if pressure is None:
+	  pressure = dS.create_variable({"name": "Pressure","unit": "hPa"}) # Create a new Variable for temperature
 
 except:
    print("Can't connect to Ubidots")
@@ -168,6 +177,7 @@ while True:
 	#print "noise[mv]", db
 
  	# Post values to Ubidots
+ 	sensorBMP085 = BMP085.BMP085()
 
 	lightValue.save_value({'value':light})
 	UVIValue.save_value({'value':UVI})
@@ -177,5 +187,16 @@ while True:
 	carbon.save_value({'value':co})	
 	temp.save_value({'value':temperature})
 	humidity.save_value({'value':hum})
+
+        tmpTemp2 = sensorBMP085.read_temperature()
+        tmpPressure = sensorBMP085.read_pressure()
+        
+        if tmpTemp2 is not None and tmpPressure is not None:
+        	print 'Temp2={0:0.2f}*C  Pressure={1:0.2f}hPa'.format(tmpTemp2, tmpPressure)
+	else:
+        	print 'Failed to get BMP085 sensor reading. Try again!'
+        	
+	temp2.save_value({'value':tmpTemp2})
+	pressure.save_value({'value':tmpPressure})
 
 GPIO.cleanup()						# Reset the status of the GPIO pins
