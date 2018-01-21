@@ -20,6 +20,9 @@ GPIO.setup(SPIMISO, GPIO.IN)
 GPIO.setup(SPICLK, GPIO.OUT)
 GPIO.setup(SPICS, GPIO.OUT)
 
+GPIO.setup(27,GPIO.OUT,initial=GPIO.LOW)	#led rosso (pin 27 GPIO)
+GPIO.setup(22,GPIO.OUT,initial=GPIO.LOW)	#led verde (pin 22 GPIO)
+
 # Setup Variables
 
 dS = None 							# Ubidots Data source. We'll call Airpi
@@ -127,7 +130,10 @@ try:
 
 except:
    print("Can't connect to Ubidots")
-
+   GPIO.output(27,GPIO.HIGH)		#accende led rosso x 5 sec se fallisce il caricamento
+   time.sleep(5)
+   GPIO.output(27,GPIO.LOW)
+	
 while True:
     # Code to get light levels data
 	light = readadc(0, SPICLK, SPIMOSI, SPIMISO, SPICS) # Read the analog pin where the LDR is connected
@@ -198,5 +204,10 @@ while True:
         	
 	temp2.save_value({'value':tmpTemp2})
 	pressure.save_value({'value':tmpPressure})
-
+   	GPIO.output(22,GPIO.HIGH)			#accende led verde x 5sec finito il caricamento
+   	time.sleep(5)
+   	GPIO.output(22,GPIO.LOW)
+	
+	
+	
 GPIO.cleanup()						# Reset the status of the GPIO pins
