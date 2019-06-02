@@ -83,7 +83,7 @@ def readadc(adcnum, clockpin, mosipin, misopin, cspin):
 # Code to connect a Ubidots
 
 try:
-   api = ApiClient("A1E-363908325ca3565186e1baf247bc77631121") # Connect to Ubidots. Don't forget to put your own apikey
+   api = ApiClient("A1E-3a5b8883c342e7b0951814fb26df020c3fac") # Connect to Ubidots. Don't forget to put your own apikey
    
    for curDs in api.get_datasources():						# Check if there's any Data Source with the name AirPi
 	if curDs.name == "AirPi":
